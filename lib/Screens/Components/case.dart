@@ -17,7 +17,7 @@ class _CaseState extends State<Case> {
     Color(0xffb3fcd4),
     Color(0xfffcb3b3)
   ];
-  List cast = [
+  List casts = [
     "Chaudhary",
     "Tamang",
     "Gurung",
@@ -82,9 +82,11 @@ class _CaseState extends State<Case> {
   List<Color> textcolors = [Colors.blue, Colors.green, Colors.red];
 
   _CaseState({required this.state});
+ 
   @override
   Widget build(BuildContext context) {
     int person = Random().nextInt(persons.length);
+    int cast = Random().nextInt(casts.length);
     String urgency = Random().nextInt(100) > 70 ? "Regular" : "Emergency";
     return Container(
       margin: EdgeInsets.all(8),
@@ -104,7 +106,7 @@ class _CaseState extends State<Case> {
               Text(
                   persons[person]["name"] +
                       " " +
-                      cast[Random().nextInt(cast.length)],
+                      casts[cast],
                   style: TextStyle(color: textcolors[states.indexOf(state)])),
               Text(persons[person]["sex"],
                   style: TextStyle(color: textcolors[states.indexOf(state)])),
@@ -185,3 +187,6 @@ class _CaseState extends State<Case> {
     );
   }
 }
+
+
+List number = ["anil","bafw","cadwf",5];
