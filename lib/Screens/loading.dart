@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:aayu/Screens/auth/authenticate.dart';
 import 'package:flutter/material.dart';
 
 class Loading extends StatefulWidget {
@@ -23,6 +24,8 @@ class _LoadingState extends State<Loading> {
         active++;
       });
     });
+    Future.delayed(Duration(seconds: 2)).then((value) => Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Auth())));
   }
 
   @override

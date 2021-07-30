@@ -82,7 +82,7 @@ class _CaseState extends State<Case> {
   List<Color> textcolors = [Colors.blue, Colors.green, Colors.red];
 
   _CaseState({required this.state});
- 
+
   @override
   Widget build(BuildContext context) {
     int person = Random().nextInt(persons.length);
@@ -103,10 +103,7 @@ class _CaseState extends State<Case> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                  persons[person]["name"] +
-                      " " +
-                      casts[cast],
+              Text(persons[person]["name"] + " " + casts[cast],
                   style: TextStyle(color: textcolors[states.indexOf(state)])),
               Text(persons[person]["sex"],
                   style: TextStyle(color: textcolors[states.indexOf(state)])),
@@ -130,11 +127,69 @@ class _CaseState extends State<Case> {
                       : Colors.transparent),
             ),
             child: Center(
-                child: Text(
-              state == "new"
-                  ? "Assign Doctor"
-                  : "Assigned Doctor: Jeevan kadel",
-              style: TextStyle(color: textcolors[states.indexOf(state)]),
+                child: GestureDetector(
+              onTap: () {
+                if (state == "new") {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return Dialog(
+                          child: Container(
+                            width: 500,
+                            height: 500,
+                            child: GridView.count(
+                              crossAxisCount: 5,
+                              children: [
+                                for (int i = 0; i < 8; i++)
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(
+                                      color: Colors.lightBlue[200],
+                                      margin: const EdgeInsets.all(8.0),
+                                      child: GridTile(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            children: [
+                                              Expanded(
+                                                  child: Icon(Icons.person,
+                                                      color: Colors.white)),
+                                              Text(
+                                                "Name",
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                              SizedBox(
+                                                height: 4,
+                                              ),
+                                              Text(
+                                                Random().nextBool()
+                                                    ? "Available"
+                                                    : "Busy",
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                }
+              },
+              child: Text(
+                state == "new"
+                    ? "Assign Doctor"
+                    : "Assigned Doctor: Jeevan kadel",
+                style: TextStyle(color: textcolors[states.indexOf(state)]),
+              ),
             )),
           ),
           SizedBox(
@@ -188,5 +243,4 @@ class _CaseState extends State<Case> {
   }
 }
 
-
-List number = ["anil","bafw","cadwf",5];
+List number = ["anil", "bafw", "cadwf", 5];

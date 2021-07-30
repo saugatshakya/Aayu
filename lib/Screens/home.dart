@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:aayu/Screens/cases.dart';
+import 'package:aayu/Screens/department.dart';
+import 'package:aayu/Screens/doctors.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -117,6 +119,18 @@ class _HomeState extends State<Home> {
                   active["page"] == 0 ? 0 : -MediaQuery.of(context).size.width,
               child: Cases()),
           AnimatedPositioned(
+            child: Department(),
+            duration: Duration(milliseconds: 500),
+            top: 80,
+            left: active["page"] == 1 ? 0 : -MediaQuery.of(context).size.width,
+          ),
+          AnimatedPositioned(
+            child: Doctors(),
+            duration: Duration(milliseconds: 500),
+            top: 80,
+            left: active["page"] == 2 ? 0 : -MediaQuery.of(context).size.width,
+          ),
+          AnimatedPositioned(
               duration: Duration(milliseconds: 500),
               top: 80,
               left: active["page"] == 1
@@ -124,23 +138,6 @@ class _HomeState extends State<Home> {
                   : active["page"] == 0
                       ? MediaQuery.of(context).size.width
                       : -MediaQuery.of(context).size.width,
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.95,
-                height: MediaQuery.of(context).size.height * 0.85,
-                alignment: Alignment.bottomRight,
-                child: FloatingActionButton(
-                  onPressed: () {},
-                  child: Icon(Icons.add),
-                ),
-              )),
-          AnimatedPositioned(
-              duration: Duration(milliseconds: 500),
-              top: 80,
-              left: active["page"] == 2
-                  ? 0
-                  : active["page"] == 3
-                      ? -MediaQuery.of(context).size.width
-                      : MediaQuery.of(context).size.width,
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.95,
                 height: MediaQuery.of(context).size.height * 0.85,
