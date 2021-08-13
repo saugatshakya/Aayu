@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:aayu/Screens/home.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -8,6 +12,38 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  bool loading = false;
+  String username = "xyz";
+  String password = "xyz";
+  _register() async {
+    setState(() {
+      loading = true;
+    });
+    final response = await http.post(
+      Uri.parse('http://802f77a6f2d0.ngrok.io/api/user/register'),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({"username": username, "password": password}),
+    );
+    if (response.statusCode == 200) {
+      var serverResponse = response.body;
+      print(serverResponse);
+    } else {
+      print(response.reasonPhrase);
+    }
+    Future.delayed(Duration(seconds: 2)).then((value) {
+      print("here");
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Home(
+                    id: 1,
+                    initpage: 0,
+                  )));
+    });
+  }
+
   BorderRadius radius = BorderRadius.only(
       topRight: Radius.circular(50),
       bottomLeft: Radius.circular(50),
@@ -49,6 +85,11 @@ class _SignupState extends State<Signup> {
               height: 16,
             ),
             TextFormField(
+                onChanged: (val) {
+                  setState(() {
+                    username = val;
+                  });
+                },
                 decoration: InputDecoration(
                     labelText: "Email",
                     labelStyle: TextStyle(color: Colors.lightBlue),
@@ -60,6 +101,11 @@ class _SignupState extends State<Signup> {
               height: 8,
             ),
             TextFormField(
+                onChanged: (val) {
+                  setState(() {
+                    password = val;
+                  });
+                },
                 decoration: InputDecoration(
                     labelText: "Password",
                     labelStyle: TextStyle(color: Colors.lightBlue),
@@ -97,22 +143,29 @@ class _SignupState extends State<Signup> {
                     SizedBox(
                       width: 8,
                     ),
-                    Container(
-                      width: 100,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.lightBlue,
-                        borderRadius: radius,
-                        border: Border.all(color: Colors.lightBlue, width: 2),
+                    GestureDetector(
+                      onTap: _register,
+                      child: Container(
+                        width: 100,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.lightBlue,
+                          borderRadius: radius,
+                          border: Border.all(color: Colors.lightBlue, width: 2),
+                        ),
+                        child: Center(
+                            child: loading
+                                ? CircularProgressIndicator(
+                                    color: Colors.white,
+                                  )
+                                : Text(
+                                    "SIGNUP",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white),
+                                  )),
                       ),
-                      child: Center(
-                          child: Text(
-                        "SIGNUP",
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white),
-                      )),
                     ),
                   ]),
             )

@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:aayu/Screens/Components/case.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class Cases extends StatefulWidget {
   @override
@@ -9,6 +12,28 @@ class Cases extends StatefulWidget {
 class _CasesState extends State<Cases> {
   int active = 1;
   List menues = ["New Case", "Active Case", "Completed Case"];
+  List cases = [];
+  getallcases() async {
+    final response = await http.get(
+      Uri.parse('http://93fd4e66c308.ngrok.io/api/cases/list'),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    );
+    if (response.statusCode == 200) {
+      var serverResponse = response.body;
+      cases = jsonDecode(serverResponse);
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getallcases();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -66,7 +91,9 @@ class _CasesState extends State<Cases> {
             height: MediaQuery.of(context).size.height * 0.82,
             child: SingleChildScrollView(
               child: Column(
-                children: [for (int i = 0; i < 10; i++) Case(state: "new")],
+                children: [
+                  for (int i = 0; i < cases.length; i++) Case(state: "new")
+                ],
               ),
             ),
           ),
@@ -89,7 +116,9 @@ class _CasesState extends State<Cases> {
             height: MediaQuery.of(context).size.height * 0.82,
             child: SingleChildScrollView(
               child: Column(
-                children: [for (int i = 0; i < 10; i++) Case(state: "active")],
+                children: [
+                  for (int i = 0; i < cases.length; i++) Case(state: "active")
+                ],
               ),
             ),
           ),
@@ -113,7 +142,8 @@ class _CasesState extends State<Cases> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for (int i = 0; i < 10; i++) Case(state: "completed")
+                  for (int i = 0; i < cases.length; i++)
+                    Case(state: "completed")
                 ],
               ),
             ),

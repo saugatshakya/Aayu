@@ -1,5 +1,6 @@
 import 'package:aayu/Screens/auth/authenticate.dart';
 import 'package:aayu/Screens/auth/login.dart';
+import 'package:aayu/Screens/auth/signup.dart';
 import 'package:aayu/Screens/home.dart';
 import 'package:aayu/Screens/loading.dart';
 import 'package:flutter/material.dart';

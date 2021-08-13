@@ -1,6 +1,7 @@
+import 'dart:convert';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class Doctors extends StatefulWidget {
   const Doctors({Key? key}) : super(key: key);
@@ -10,6 +11,32 @@ class Doctors extends StatefulWidget {
 }
 
 class _DoctorsState extends State<Doctors> {
+  List doctors = [];
+  getalldepartments() async {
+    final response = await http.get(
+      Uri.parse('http://93fd4e66c308.ngrok.io/api/doctor/list'),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    );
+    if (response.statusCode == 200) {
+      var serverResponse = response.body;
+      doctors = jsonDecode(serverResponse);
+      print(doctors);
+      setState(() {});
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
+  @override
+  void initState() {
+    getalldepartments();
+    super.initState();
+  }
+
+  String status = Random().nextBool() ? "Available" : "Busy";
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -21,9 +48,11 @@ class _DoctorsState extends State<Doctors> {
           child: GridView.count(
             crossAxisCount: 5,
             children: [
-              for (int i = 0; i < 8; i++)
+              for (int i = 0; i < doctors.length; i++)
                 Container(
-                  color: Colors.lightBlue[200],
+                  color: status == "Available"
+                      ? Colors.lightBlue[200]
+                      : Colors.red[200],
                   margin: const EdgeInsets.all(8.0),
                   child: GridTile(
                     child: Padding(
@@ -33,14 +62,21 @@ class _DoctorsState extends State<Doctors> {
                           Expanded(
                               child: Icon(Icons.person, color: Colors.white)),
                           Text(
-                            "Name",
+                            doctors[i]["doctorName"],
                             style: TextStyle(color: Colors.white),
                           ),
                           SizedBox(
                             height: 4,
                           ),
                           Text(
-                            Random().nextBool() ? "Available" : "Busy",
+                            status,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Text(
+                            doctors[i]["contact_phone"],
                             style: TextStyle(color: Colors.white),
                           )
                         ],

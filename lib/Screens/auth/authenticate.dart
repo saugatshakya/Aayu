@@ -39,7 +39,6 @@ class _AuthState extends State<Auth> {
                       }
                       login.currentState!.toggleCard();
                     });
-                    print(active);
                   },
                   child: FlipCard(
                     key: login,
@@ -80,7 +79,6 @@ class _AuthState extends State<Auth> {
                       }
                       signup.currentState!.toggleCard();
                     });
-                    print(active);
                   },
                   child: FlipCard(
                     key: signup,

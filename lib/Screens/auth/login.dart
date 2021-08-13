@@ -23,26 +23,27 @@ class _LoginState extends State<Login> {
     setState(() {
       loading = true;
     });
-    // print(username);
-    // print(password);
-    // final response = await http.post(
-    //   Uri.parse('https://49aae21aee5a.ngrok.io/user/api/add'),
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: jsonEncode({"username": username, "password": password}),
-    // );
-    // if (response.statusCode == 200) {
-    //   var serverResponse = response.body;
-    //   print(serverResponse);
-    // } else {
-    //   print(response.reasonPhrase);
-    // }
-    Future.delayed(Duration(seconds: 2)).then((value) {
-      print("here");
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Home()));
-    });
+    final response = await http.post(
+      Uri.parse('http://93fd4e66c308.ngrok.io/api/user/login'),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({"username": username, "password": password}),
+    );
+    if (response.statusCode == 200) {
+      var serverResponse = response.body;
+      Future.delayed(Duration(seconds: 2)).then((value) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Home(
+                      id: int.parse(serverResponse),
+                      initpage: 0,
+                    )));
+      });
+    } else {
+      print(response.reasonPhrase);
+    }
   }
 
   @override
@@ -102,6 +103,7 @@ class _LoginState extends State<Login> {
                     password = val;
                   });
                 },
+                obscureText: true,
                 decoration: InputDecoration(
                     labelText: "Password",
                     labelStyle: TextStyle(color: Colors.lightBlue),
