@@ -15,7 +15,7 @@ class _CasesState extends State<Cases> {
   List cases = [];
   getallcases() async {
     final response = await http.get(
-      Uri.parse('http://93fd4e66c308.ngrok.io/api/cases/list'),
+      Uri.parse('https://call-db-aayu.herokuapp.com/api/cases/list'),
       headers: {
         "Content-Type": "application/json",
       },

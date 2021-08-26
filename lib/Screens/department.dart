@@ -14,7 +14,7 @@ class _DepartmentState extends State<Department> {
   List departments = [];
   getalldepartments() async {
     final response = await http.get(
-      Uri.parse('http://93fd4e66c308.ngrok.io/api/department/list'),
+      Uri.parse('https://call-db-aayu.herokuapp.com/api/department/list'),
       headers: {
         "Content-Type": "application/json",
       },

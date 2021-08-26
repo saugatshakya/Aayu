@@ -29,7 +29,7 @@ class _HomeState extends State<Home> {
 
   adddepartment() async {
     final response = await http.post(
-      Uri.parse('http://93fd4e66c308.ngrok.io/api/department/add'),
+      Uri.parse('https://call-db-aayu.herokuapp.com/api/department/register'),
       headers: {
         "Content-Type": "application/json",
       },

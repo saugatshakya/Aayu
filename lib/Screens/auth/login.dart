@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:aayu/Screens/home.dart';
+import 'package:aayu/Screens/setHospital.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,7 +25,7 @@ class _LoginState extends State<Login> {
       loading = true;
     });
     final response = await http.post(
-      Uri.parse('http://93fd4e66c308.ngrok.io/api/user/login'),
+      Uri.parse('https://call-db-aayu.herokuapp.com/api/user/login'),
       headers: {
         "Content-Type": "application/json",
       },
@@ -32,15 +33,18 @@ class _LoginState extends State<Login> {
     );
     if (response.statusCode == 200) {
       var serverResponse = response.body;
-      Future.delayed(Duration(seconds: 2)).then((value) {
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Home(
-                      id: int.parse(serverResponse),
-                      initpage: 0,
-                    )));
-      });
+      print(serverResponse);
+      if (int.parse(serverResponse) < 5000) {
+        // Future.delayed(Duration(seconds: 2)).then((value) {
+        //   Navigator.pushReplacement(
+        //       context,
+        //       MaterialPageRoute(
+        //           builder: (context) => Home(
+        //                 id: int.parse(serverResponse),
+        //                 initpage: 0,
+        //               )));
+        // });
+      }
     } else {
       print(response.reasonPhrase);
     }

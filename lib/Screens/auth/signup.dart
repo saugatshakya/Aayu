@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:aayu/Screens/home.dart';
+import 'package:aayu/Screens/setHospital.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,7 +21,7 @@ class _SignupState extends State<Signup> {
       loading = true;
     });
     final response = await http.post(
-      Uri.parse('http://802f77a6f2d0.ngrok.io/api/user/register'),
+      Uri.parse('https://call-db-aayu.herokuapp.com/api/user/register'),
       headers: {
         "Content-Type": "application/json",
       },
@@ -29,19 +30,15 @@ class _SignupState extends State<Signup> {
     if (response.statusCode == 200) {
       var serverResponse = response.body;
       print(serverResponse);
+      if (int.parse(serverResponse) < 5000) {
+        Future.delayed(Duration(seconds: 2)).then((value) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => SetHospital()));
+        });
+      }
     } else {
       print(response.reasonPhrase);
     }
-    Future.delayed(Duration(seconds: 2)).then((value) {
-      print("here");
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Home(
-                    id: 1,
-                    initpage: 0,
-                  )));
-    });
   }
 
   BorderRadius radius = BorderRadius.only(

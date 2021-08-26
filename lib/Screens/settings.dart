@@ -17,7 +17,7 @@ class _SettingsState extends State<Settings> {
   _SettingsState({required this.id});
   gethospital() async {
     final response = await http.get(
-      Uri.parse('http://93fd4e66c308.ngrok.io/api/hospital/$id'),
+      Uri.parse('https://call-db-aayu.herokuapp.com/api/hospital/$id'),
       headers: {
         "Content-Type": "application/json",
       },
@@ -51,7 +51,7 @@ class _SettingsState extends State<Settings> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          hospital["hospitalName"] == ""
+          hospital == null
               ? Container(
                   width: MediaQuery.of(context).size.width * 0.5,
                   child: TextField(
@@ -80,6 +80,28 @@ class _SettingsState extends State<Settings> {
                     ),
                   ),
                 ),
+          GestureDetector(
+            onTap: () async {
+              final response = await http.get(
+                Uri.parse(
+                    'https://call-db-aayu.herokuapp.com/api/hospital/$id'),
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              );
+              if (response.statusCode == 200) {
+                var serverResponse = response.body;
+                hospital = jsonDecode(serverResponse);
+                setState(() {});
+              } else {
+                print(response.reasonPhrase);
+              }
+            },
+            child: Container(
+              color: Colors.blue,
+              child: Text("Submit"),
+            ),
+          )
         ],
       ),
     );
