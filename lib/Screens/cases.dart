@@ -5,6 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Cases extends StatefulWidget {
+  final List cases, doctors;
+  final VoidCallback sel, rel;
+  Cases(
+      {required this.cases,
+      required this.doctors,
+      required this.sel,
+      required this.rel});
   @override
   _CasesState createState() => _CasesState();
 }
@@ -92,7 +99,15 @@ class _CasesState extends State<Cases> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for (int i = 0; i < cases.length; i++) Case(state: "new")
+                  for (int i = 0; i < widget.cases.length; i++)
+                    widget.cases[i]["status"] == "new"
+                        ? Case(
+                            obj: widget.cases[i],
+                            doctors: widget.doctors,
+                            sel: widget.sel,
+                            rel: widget.rel,
+                          )
+                        : SizedBox.shrink()
                 ],
               ),
             ),
@@ -117,7 +132,15 @@ class _CasesState extends State<Cases> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for (int i = 0; i < cases.length; i++) Case(state: "active")
+                  for (int i = 0; i < widget.cases.length; i++)
+                    widget.cases[i]["status"] == "active"
+                        ? Case(
+                            obj: widget.cases[i],
+                            doctors: widget.doctors,
+                            sel: widget.sel,
+                            rel: widget.rel,
+                          )
+                        : SizedBox.shrink()
                 ],
               ),
             ),
@@ -142,8 +165,14 @@ class _CasesState extends State<Cases> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for (int i = 0; i < cases.length; i++)
-                    Case(state: "completed")
+                  for (int i = 0; i < widget.cases.length; i++)
+                    widget.cases[i]["status"] == "completed"
+                        ? Case(
+                            obj: widget.cases[i],
+                            doctors: widget.doctors,
+                            sel: widget.sel,
+                            rel: widget.rel)
+                        : SizedBox.shrink()
                 ],
               ),
             ),

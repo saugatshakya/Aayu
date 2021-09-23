@@ -24,8 +24,81 @@ class _HomeState extends State<Home> {
   Map active = {"page": 0, "indicator": 22.00};
   double width = 40;
   late String name, avai, occ;
+  List<Map> doctors = [
+    {"doctor_name": "Arbin", "contact_phone": "980000000", "status": "active"},
+    {"doctor_name": "Asfiq", "contact_phone": "980000123", "status": "active"}
+  ];
+  List<Map> departments = [
+    {"id": "00", "name": "Cardio", "aBeds": "24", "oBeds": "12"},
+    {"id": "01", "name": "Skin", "aBeds": "15", "oBeds": "26"}
+  ];
+  List<Map> cases = [
+    {
+      "status": "new",
+      "name": "Hari Sharma",
+      "sex": "Male",
+      "age": "32",
+      "bloodGroup": "O+",
+      "number": "980000000",
+      "case": "Burn"
+    },
+    {
+      "status": "new",
+      "name": "Ram Guru",
+      "sex": "Male",
+      "age": "23",
+      "bloodGroup": "B+",
+      "number": "9802342350",
+      "case": "Eye"
+    },
+    {
+      "status": "new",
+      "name": "Rohan Shrestha",
+      "sex": "Male",
+      "age": "65",
+      "bloodGroup": "O+",
+      "number": "980021440",
+      "case": "Accident"
+    },
+    {
+      "status": "active",
+      "name": "Ram Kumar",
+      "sex": "Male",
+      "age": "28",
+      "bloodGroup": "B+",
+      "number": "9821412551",
+      "case": "Cardio"
+    },
+    {
+      "status": "completed",
+      "name": "Sita Basnet",
+      "sex": "Female",
+      "age": "44",
+      "bloodGroup": "A+",
+      "number": "9800214100",
+      "case": "Skin"
+    }
+  ];
+  sel() {
+    doctors[0]["status"] = "busy";
+    departments[1]["aBeds"] =
+        (int.parse(departments[1]["aBeds"]) - 1).toString();
+    departments[1]["oBeds"] =
+        (int.parse(departments[1]["oBeds"]) + 1).toString();
+    cases[0]["status"] = "active";
+    setState(() {});
+    Navigator.pop(context);
+  }
 
-  List departments = [];
+  rel() {
+    doctors[0]["status"] = "active";
+    departments[1]["aBeds"] =
+        (int.parse(departments[1]["aBeds"]) + 1).toString();
+    departments[1]["oBeds"] =
+        (int.parse(departments[1]["oBeds"]) - 1).toString();
+    cases[0]["status"] = "completed";
+    setState(() {});
+  }
 
   adddepartment() async {
     final response = await http.post(
@@ -58,8 +131,8 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    print(widget.id);
     active["page"] = widget.initpage;
-
     setState(() {});
   }
 
@@ -162,13 +235,18 @@ class _HomeState extends State<Home> {
             ),
           ),
           AnimatedPositioned(
-              duration: Duration(milliseconds: 500),
-              top: 80,
-              left:
-                  active["page"] == 0 ? 0 : -MediaQuery.of(context).size.width,
-              child: Cases()),
+            duration: Duration(milliseconds: 500),
+            top: 80,
+            left: active["page"] == 0 ? 0 : -MediaQuery.of(context).size.width,
+            child: Cases(
+              cases: cases,
+              doctors: doctors,
+              sel: sel,
+              rel: rel,
+            ),
+          ),
           AnimatedPositioned(
-            child: Department(),
+            child: Department(departments: departments),
             duration: Duration(milliseconds: 500),
             top: 80,
             left: active["page"] == 1
@@ -178,7 +256,7 @@ class _HomeState extends State<Home> {
                     : -MediaQuery.of(context).size.width,
           ),
           AnimatedPositioned(
-            child: Doctors(),
+            child: Doctors(doctors: doctors),
             duration: Duration(milliseconds: 500),
             top: 80,
             left: active["page"] == 2 ? 0 : -MediaQuery.of(context).size.width,

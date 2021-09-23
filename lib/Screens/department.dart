@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Department extends StatefulWidget {
-  const Department({Key? key}) : super(key: key);
+  final List departments;
+  Department({required this.departments});
 
   @override
   _DepartmentState createState() => _DepartmentState();
@@ -12,7 +13,25 @@ class Department extends StatefulWidget {
 
 class _DepartmentState extends State<Department> {
   List departments = [];
+  deletedepartment(id) async {
+    final response = await http.get(
+      Uri.parse('https://call-db-aayu.herokuapp.com/api/department/delete/id'),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    );
+    print("hey");
+    if (response.statusCode == 200) {
+      var serverResponse = response.body;
+      print(serverResponse);
+      getalldepartments();
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
   getalldepartments() async {
+    print("hello");
     final response = await http.get(
       Uri.parse('https://call-db-aayu.herokuapp.com/api/department/list'),
       headers: {
@@ -44,45 +63,68 @@ class _DepartmentState extends State<Department> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            for (int i = 0; i < departments.length; i++)
+            for (int i = 0; i < widget.departments.length; i++)
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.65,
                   child: ListTile(
-                      tileColor: Colors.lightBlue,
-                      dense: true,
-                      title: Row(children: [
-                        Text(departments[i]["departmentId"].toString(),
-                            style: TextStyle(
-                              color: Colors.white,
-                            )),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        Text(departments[i]["department_name"] ?? "department",
-                            style: TextStyle(
-                              color: Colors.white,
-                            )),
-                        SizedBox(
-                          width: 100,
-                        ),
-                        Text(
-                            "Available Beds: " +
-                                departments[i]["available_bed"].toString(),
-                            style: TextStyle(
-                              color: Colors.white,
-                            )),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        Text(
-                            "Occupied Beds: " +
-                                departments[i]["occupied_bed"].toString(),
-                            style: TextStyle(
-                              color: Colors.white,
-                            )),
-                      ])),
+                    tileColor: Colors.lightBlue,
+                    dense: true,
+                    title: Row(children: [
+                      Text(widget.departments[i]["id"].toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                          )),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Text(widget.departments[i]["name"] ?? "department",
+                          style: TextStyle(
+                            color: Colors.white,
+                          )),
+                      SizedBox(
+                        width: 100,
+                      ),
+                      Text(
+                          "Available Beds: " +
+                              widget.departments[i]["aBeds"].toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                          )),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Text(
+                          "Occupied Beds: " +
+                              widget.departments[i]["oBeds"].toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                          )),
+                    ]),
+                    trailing: GestureDetector(
+                        onTap: () async {
+                          final response = await http.get(
+                            Uri.parse(
+                                'https://call-db-aayu.herokuapp.com/api/department/delete/${departments[i]["department_id"]}'),
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                          );
+                          print("hey");
+                          if (response.statusCode == 200) {
+                            var serverResponse = response.body;
+                            print(serverResponse);
+                            getalldepartments();
+                          } else {
+                            print(response.reasonPhrase);
+                          }
+                        },
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        )),
+                  ),
                 ),
               )
           ],

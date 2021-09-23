@@ -31,27 +31,28 @@ class _SignupState extends State<Signup> {
       var serverResponse = response.body;
       print(serverResponse);
       if (int.parse(serverResponse) < 5000) {
-        Future.delayed(Duration(seconds: 2)).then((value) {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => SetHospital()));
-        });
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SetHospital(
+                      id: serverResponse,
+                    )));
       }
     } else {
       print(response.reasonPhrase);
     }
+    setState(() {
+      loading = false;
+    });
   }
 
-  BorderRadius radius = BorderRadius.only(
-      topRight: Radius.circular(50),
-      bottomLeft: Radius.circular(50),
-      bottomRight: Radius.circular(50));
   late InputBorder border;
   @override
   void initState() {
     super.initState();
     border = OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.lightBlue, width: 2),
-        borderRadius: radius);
+      borderSide: BorderSide(color: Colors.lightBlue, width: 2),
+    );
   }
 
   @override
@@ -60,9 +61,9 @@ class _SignupState extends State<Signup> {
       child: Container(
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.lightBlue, width: 2),
-            borderRadius: radius),
+          color: Colors.white,
+          border: Border.all(color: Colors.lightBlue, width: 5),
+        ),
         height: 300,
         width: 300,
         child: Column(
@@ -122,7 +123,7 @@ class _SignupState extends State<Signup> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          "Already have an account? LogIn",
+                          "Already a user? LogIn",
                           style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
@@ -147,13 +148,16 @@ class _SignupState extends State<Signup> {
                         height: 40,
                         decoration: BoxDecoration(
                           color: Colors.lightBlue,
-                          borderRadius: radius,
                           border: Border.all(color: Colors.lightBlue, width: 2),
                         ),
                         child: Center(
                             child: loading
-                                ? CircularProgressIndicator(
-                                    color: Colors.white,
+                                ? Container(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
                                   )
                                 : Text(
                                     "SIGNUP",

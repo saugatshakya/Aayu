@@ -3,14 +3,21 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class Case extends StatefulWidget {
-  final String state;
-  Case({required this.state});
+  final Map obj;
+  final List doctors;
+  final VoidCallback sel, rel;
+  Case(
+      {required this.obj,
+      required this.doctors,
+      required this.sel,
+      required this.rel});
   @override
-  _CaseState createState() => _CaseState(state: state);
+  _CaseState createState() => _CaseState(obj: obj);
 }
 
 class _CaseState extends State<Case> {
-  final String state;
+  final Map obj;
+  _CaseState({required this.obj});
   List states = ["new", "active", "completed"];
   List<Color> colors = [
     Color(0xffB3E5FC),
@@ -80,8 +87,11 @@ class _CaseState extends State<Case> {
   ];
   List bloodgroup = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
   List<Color> textcolors = [Colors.blue, Colors.green, Colors.red];
-
-  _CaseState({required this.state});
+  @override
+  void initState() {
+    print(obj["status"] == "new");
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +102,8 @@ class _CaseState extends State<Case> {
       margin: EdgeInsets.all(8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(width: 2, color: colors[states.indexOf(state)]),
+        border:
+            Border.all(width: 2, color: colors[states.indexOf(obj["status"])]),
       ),
       width: MediaQuery.of(context).size.width * 0.96,
       height: 80,
@@ -103,13 +114,16 @@ class _CaseState extends State<Case> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(persons[person]["name"] + " " + casts[cast],
-                  style: TextStyle(color: textcolors[states.indexOf(state)])),
-              Text(persons[person]["sex"],
-                  style: TextStyle(color: textcolors[states.indexOf(state)])),
+              Text(obj["name"],
+                  style: TextStyle(
+                      color: textcolors[states.indexOf(obj["status"])])),
+              Text(obj["sex"],
+                  style: TextStyle(
+                      color: textcolors[states.indexOf(obj["status"])])),
               Text(
-                (Random().nextInt(92) + 1).toString(),
-                style: TextStyle(color: textcolors[states.indexOf(state)]),
+                obj["age"],
+                style:
+                    TextStyle(color: textcolors[states.indexOf(obj["status"])]),
               )
             ],
           ),
@@ -117,125 +131,121 @@ class _CaseState extends State<Case> {
         horizontalTitleGap: 0,
         trailing: Column(children: [
           Container(
-            width: state == "new" ? 120 : 220,
+            width: obj["status"] == "new" ? 120 : 220,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
                   width: 2,
-                  color: state == "new"
-                      ? colors[states.indexOf(state)]
+                  color: obj["status"] == "new"
+                      ? colors[states.indexOf(obj["status"])]
                       : Colors.transparent),
             ),
             child: Center(
                 child: GestureDetector(
-              onTap: () {
-                if (state == "new") {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Dialog(
-                          child: Container(
-                            width: 500,
-                            height: 500,
-                            child: GridView.count(
-                              crossAxisCount: 5,
-                              children: [
-                                for (int i = 0; i < 8; i++)
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Container(
-                                      color: Colors.lightBlue[200],
-                                      margin: const EdgeInsets.all(8.0),
-                                      child: GridTile(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            children: [
-                                              Expanded(
-                                                  child: Icon(Icons.person,
-                                                      color: Colors.white)),
-                                              Text(
-                                                "Name",
-                                                style: TextStyle(
-                                                    color: Colors.white),
+              onTap: obj["status"] == "new"
+                  ? () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              child: Container(
+                                width: 500,
+                                height: 500,
+                                child: GridView.count(
+                                  crossAxisCount: 5,
+                                  children: [
+                                    for (int i = 0;
+                                        i < widget.doctors.length;
+                                        i++)
+                                      GestureDetector(
+                                        onTap: widget.sel,
+                                        child: Container(
+                                          color: Colors.lightBlue[200],
+                                          margin: const EdgeInsets.all(8.0),
+                                          child: GridTile(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                children: [
+                                                  Expanded(
+                                                      child: Icon(Icons.person,
+                                                          color: Colors.white)),
+                                                  Text(
+                                                    widget.doctors[i]
+                                                        ["doctor_name"],
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 4,
+                                                  ),
+                                                  Text(
+                                                    widget.doctors[i]["status"],
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  )
+                                                ],
                                               ),
-                                              SizedBox(
-                                                height: 4,
-                                              ),
-                                              Text(
-                                                Random().nextBool()
-                                                    ? "Available"
-                                                    : "Busy",
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              )
-                                            ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  )
-                              ],
-                            ),
-                          ),
-                        );
-                      });
-                }
-              },
+                                      )
+                                  ],
+                                ),
+                              ),
+                            );
+                          });
+                    }
+                  : widget.rel,
               child: Text(
-                state == "new"
+                obj["status"] == "new"
                     ? "Assign Doctor"
-                    : "Assigned Doctor: Jeevan kadel",
-                style: TextStyle(color: textcolors[states.indexOf(state)]),
+                    : "Assigned Doctor: Arbin",
+                style:
+                    TextStyle(color: textcolors[states.indexOf(obj["status"])]),
               ),
             )),
           ),
           SizedBox(
             height: 8,
           ),
-          Container(
-            width: state == "new" ? 120 : 220,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(
-                  width: 2,
-                  color: state == "new"
-                      ? colors[states.indexOf(state)]
-                      : Colors.transparent),
-            ),
-            child: Center(
-                child: Text(
-              state == "new"
-                  ? "Assign Bed"
-                  : "ER Room " +
-                      (Random().nextInt(300 - 100) + 100).toString() +
-                      "   " +
-                      "  Bed " +
-                      (Random().nextInt(200) + 1).toString(),
-              style: TextStyle(color: textcolors[states.indexOf(state)]),
-            )),
-          )
+          obj["status"] == "new"
+              ? SizedBox.shrink()
+              : Container(
+                  width: obj["status"] == "new" ? 120 : 220,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                        width: 2,
+                        color: obj["status"] == "new"
+                            ? colors[states.indexOf(obj["status"])]
+                            : Colors.transparent),
+                  ),
+                  child: Center(
+                      child: Text(
+                    obj["status"] == "new" ? "Assign Bed" : "Skin Dep",
+                    style: TextStyle(
+                        color: textcolors[states.indexOf(obj["status"])]),
+                  )),
+                )
         ]),
         title: Padding(
           padding: EdgeInsets.only(top: 10),
           child: Text(
             urgency,
-            style: TextStyle(color: textcolors[states.indexOf(state)]),
+            style: TextStyle(color: textcolors[states.indexOf(obj["status"])]),
           ),
         ),
         subtitle:
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
-            "Road accident " +
-                "   " +
-                bloodgroup[Random().nextInt(bloodgroup.length)],
-            style: TextStyle(color: textcolors[states.indexOf(state)]),
+            obj["case"] + "   " + obj["bloodGroup"],
+            style: TextStyle(color: textcolors[states.indexOf(obj["status"])]),
           ),
           Text(
-            "June " + (Random().nextInt(31) + 1).toString(),
-            style: TextStyle(color: textcolors[states.indexOf(state)]),
+            "August " + 27.toString(),
+            style: TextStyle(color: textcolors[states.indexOf(obj["status"])]),
           )
         ]),
       ),

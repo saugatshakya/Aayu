@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Doctors extends StatefulWidget {
-  const Doctors({Key? key}) : super(key: key);
+  final List doctors;
+  Doctors({required this.doctors});
 
   @override
   _DoctorsState createState() => _DoctorsState();
@@ -48,9 +49,9 @@ class _DoctorsState extends State<Doctors> {
           child: GridView.count(
             crossAxisCount: 5,
             children: [
-              for (int i = 0; i < doctors.length; i++)
+              for (int i = 0; i < widget.doctors.length; i++)
                 Container(
-                  color: status == "Available"
+                  color: widget.doctors[i]["status"] == "active"
                       ? Colors.lightBlue[200]
                       : Colors.red[200],
                   margin: const EdgeInsets.all(8.0),
@@ -62,21 +63,21 @@ class _DoctorsState extends State<Doctors> {
                           Expanded(
                               child: Icon(Icons.person, color: Colors.white)),
                           Text(
-                            doctors[i]["doctorName"],
+                            widget.doctors[i]["doctor_name"] ?? "name",
                             style: TextStyle(color: Colors.white),
                           ),
                           SizedBox(
                             height: 4,
                           ),
                           Text(
-                            status,
+                            widget.doctors[i]["status"],
                             style: TextStyle(color: Colors.white),
                           ),
                           SizedBox(
                             height: 4,
                           ),
                           Text(
-                            doctors[i]["contact_phone"],
+                            widget.doctors[i]["contact_phone"] ?? "contact",
                             style: TextStyle(color: Colors.white),
                           )
                         ],

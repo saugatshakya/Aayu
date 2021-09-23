@@ -35,27 +35,28 @@ class _LoginState extends State<Login> {
       var serverResponse = response.body;
       print(serverResponse);
       if (int.parse(serverResponse) < 5000) {
-        // Future.delayed(Duration(seconds: 2)).then((value) {
-        //   Navigator.pushReplacement(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) => Home(
-        //                 id: int.parse(serverResponse),
-        //                 initpage: 0,
-        //               )));
-        // });
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Home(
+                      id: int.parse(serverResponse),
+                      initpage: 0,
+                    )));
       }
     } else {
       print(response.reasonPhrase);
     }
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
   void initState() {
     super.initState();
     border = OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.lightBlue, width: 2),
-        borderRadius: radius);
+      borderSide: BorderSide(color: Colors.lightBlue, width: 2),
+    );
   }
 
   @override
@@ -64,9 +65,9 @@ class _LoginState extends State<Login> {
       child: Container(
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: Colors.lightBlue, width: 2),
-            borderRadius: radius),
+          color: Colors.white,
+          border: Border.all(color: Colors.lightBlue, width: 5),
+        ),
         height: 300,
         width: 300,
         child: Column(
@@ -152,13 +153,16 @@ class _LoginState extends State<Login> {
                         height: 40,
                         decoration: BoxDecoration(
                           color: Colors.lightBlue,
-                          borderRadius: radius,
                           border: Border.all(color: Colors.lightBlue, width: 2),
                         ),
                         child: Center(
                             child: loading
-                                ? CircularProgressIndicator(
-                                    color: Colors.white,
+                                ? Container(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
                                   )
                                 : Text(
                                     "LOGIN",

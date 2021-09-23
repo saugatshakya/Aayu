@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:aayu/Screens/auth/authenticate.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,7 +14,10 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   final int id;
-  late var hospital;
+  var hospital;
+  bool pats = true;
+  bool doctors = true;
+
   _SettingsState({required this.id});
   gethospital() async {
     final response = await http.get(
@@ -25,6 +29,7 @@ class _SettingsState extends State<Settings> {
     if (response.statusCode == 200) {
       var serverResponse = response.body;
       hospital = jsonDecode(serverResponse);
+      print(hospital);
       setState(() {});
     } else {
       print(response.reasonPhrase);
@@ -69,37 +74,91 @@ class _SettingsState extends State<Settings> {
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                     padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            colors: [Colors.lightBlue, Colors.white],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter)),
                     child: Text(
-                      hospital["hospitalName"],
-                      style: TextStyle(fontSize: 32, color: Colors.white),
+                      hospital["hospital_name"],
+                      style: TextStyle(fontSize: 32, color: Colors.lightBlue),
                     ),
                   ),
                 ),
+          // GestureDetector(
+          //   onTap: () async {
+          //     final response = await http.get(
+          //       Uri.parse(
+          //           'https://call-db-aayu.herokuapp.com/api/hospital/$id'),
+          //       headers: {
+          //         "Content-Type": "application/json",
+          //       },
+          //     );
+          //     if (response.statusCode == 200) {
+          //       var serverResponse = response.body;
+          //       hospital = jsonDecode(serverResponse);
+          //       setState(() {});
+          //     } else {
+          //       print(response.reasonPhrase);
+          //     }
+          //   },
+          //   child: Container(
+          //     color: Colors.blue,
+          //     child: Text("Submit"),
+          //   ),
+          // )
+          SizedBox(
+            height: 30,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Allow Patients",
+                  style: TextStyle(color: Colors.lightBlue),
+                ),
+                SizedBox(
+                  width: 200,
+                ),
+                Checkbox(
+                    value: pats,
+                    onChanged: (val) {
+                      setState(() {
+                        pats = val!;
+                      });
+                    })
+              ],
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Allow Doctors",
+                  style: TextStyle(color: Colors.lightBlue),
+                ),
+                SizedBox(
+                  width: 200,
+                ),
+                Checkbox(
+                    value: doctors,
+                    onChanged: (val) {
+                      setState(() {
+                        doctors = val!;
+                      });
+                    })
+              ],
+            ),
+          ),
           GestureDetector(
-            onTap: () async {
-              final response = await http.get(
-                Uri.parse(
-                    'https://call-db-aayu.herokuapp.com/api/hospital/$id'),
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              );
-              if (response.statusCode == 200) {
-                var serverResponse = response.body;
-                hospital = jsonDecode(serverResponse);
-                setState(() {});
-              } else {
-                print(response.reasonPhrase);
-              }
+            onTap: () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (BuildContext context) => Auth()));
             },
             child: Container(
-              color: Colors.blue,
-              child: Text("Submit"),
+              padding: EdgeInsets.all(12),
+              decoration:
+                  BoxDecoration(border: Border.all(color: Colors.lightBlue)),
+              child: Center(child: Text("SignOut")),
             ),
           )
         ],

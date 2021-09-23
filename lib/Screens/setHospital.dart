@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class SetHospital extends StatefulWidget {
-  const SetHospital({Key? key}) : super(key: key);
-
+  final id;
+  SetHospital({this.id});
   @override
   _SetHospitalState createState() => _SetHospitalState();
 }
@@ -14,17 +14,19 @@ class SetHospital extends StatefulWidget {
 class _SetHospitalState extends State<SetHospital> {
   String name = "";
   hospitalRegister() async {
+    print(widget.id);
     final response = await http.post(
-      Uri.parse('https://call-db-aayu.herokuapp.com/api/hospital/register'),
+      Uri.parse(
+          'https://call-db-aayu.herokuapp.com/api/hospital/register/${widget.id}'),
       headers: {
         "Content-Type": "application/json",
       },
       body: jsonEncode({"hospital_name": name}),
     );
     if (response.statusCode == 200) {
+      print("here");
       var serverResponse = jsonDecode(response.body);
       print(serverResponse);
-
       Future.delayed(Duration(seconds: 2)).then((value) {
         Navigator.pushReplacement(
             context,
@@ -35,10 +37,12 @@ class _SetHospitalState extends State<SetHospital> {
                     )));
       });
     } else {
+      print("dead");
       print(response.reasonPhrase);
     }
   }
 
+  setHospital() {}
   @override
   Widget build(BuildContext context) {
     return Material(
