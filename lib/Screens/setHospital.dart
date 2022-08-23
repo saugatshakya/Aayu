@@ -14,7 +14,6 @@ class SetHospital extends StatefulWidget {
 class _SetHospitalState extends State<SetHospital> {
   String name = "";
   hospitalRegister() async {
-    print(widget.id);
     final response = await http.post(
       Uri.parse(
           'https://call-db-aayu.herokuapp.com/api/hospital/register/${widget.id}'),
@@ -24,9 +23,7 @@ class _SetHospitalState extends State<SetHospital> {
       body: jsonEncode({"hospital_name": name}),
     );
     if (response.statusCode == 200) {
-      print("here");
       var serverResponse = jsonDecode(response.body);
-      print(serverResponse);
       Future.delayed(Duration(seconds: 2)).then((value) {
         Navigator.pushReplacement(
             context,
@@ -37,7 +34,6 @@ class _SetHospitalState extends State<SetHospital> {
                     )));
       });
     } else {
-      print("dead");
       print(response.reasonPhrase);
     }
   }

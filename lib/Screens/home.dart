@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:aayu/Screens/Components/newdoc.dart';
 import 'package:aayu/Screens/cases.dart';
 import 'package:aayu/Screens/department.dart';
 import 'package:aayu/Screens/doctors.dart';
@@ -24,85 +25,27 @@ class _HomeState extends State<Home> {
   Map active = {"page": 0, "indicator": 22.00};
   double width = 40;
   late String name, avai, occ;
-  List<Map> doctors = [
-    {"doctor_name": "Arbin", "contact_phone": "980000000", "status": "active"},
-    {"doctor_name": "Asfiq", "contact_phone": "980000123", "status": "active"}
-  ];
-  List<Map> departments = [
-    {"id": "00", "name": "Cardio", "aBeds": "24", "oBeds": "12"},
-    {"id": "01", "name": "Skin", "aBeds": "15", "oBeds": "26"}
-  ];
-  List<Map> cases = [
-    {
-      "status": "new",
-      "name": "Hari Sharma",
-      "sex": "Male",
-      "age": "32",
-      "bloodGroup": "O+",
-      "number": "980000000",
-      "case": "Burn"
-    },
-    {
-      "status": "new",
-      "name": "Ram Guru",
-      "sex": "Male",
-      "age": "23",
-      "bloodGroup": "B+",
-      "number": "9802342350",
-      "case": "Eye"
-    },
-    {
-      "status": "new",
-      "name": "Rohan Shrestha",
-      "sex": "Male",
-      "age": "65",
-      "bloodGroup": "O+",
-      "number": "980021440",
-      "case": "Accident"
-    },
-    {
-      "status": "active",
-      "name": "Ram Kumar",
-      "sex": "Male",
-      "age": "28",
-      "bloodGroup": "B+",
-      "number": "9821412551",
-      "case": "Cardio"
-    },
-    {
-      "status": "completed",
-      "name": "Sita Basnet",
-      "sex": "Female",
-      "age": "44",
-      "bloodGroup": "A+",
-      "number": "9800214100",
-      "case": "Skin"
+  List doctors = [];
+  getalldoctors() async {
+    final response = await http.get(
+      Uri.parse('https://call-db-aayu.herokuapp.com/api/doctor/list'),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    );
+    if (response.statusCode == 200) {
+      var serverResponse = response.body;
+      doctors = jsonDecode(serverResponse);
+      setState(() {});
+    } else {
+      print(response.reasonPhrase);
     }
-  ];
-  sel() {
-    doctors[0]["status"] = "busy";
-    departments[1]["aBeds"] =
-        (int.parse(departments[1]["aBeds"]) - 1).toString();
-    departments[1]["oBeds"] =
-        (int.parse(departments[1]["oBeds"]) + 1).toString();
-    cases[0]["status"] = "active";
-    setState(() {});
-    Navigator.pop(context);
-  }
-
-  rel() {
-    doctors[0]["status"] = "active";
-    departments[1]["aBeds"] =
-        (int.parse(departments[1]["aBeds"]) + 1).toString();
-    departments[1]["oBeds"] =
-        (int.parse(departments[1]["oBeds"]) - 1).toString();
-    cases[0]["status"] = "completed";
-    setState(() {});
   }
 
   adddepartment() async {
     final response = await http.post(
-      Uri.parse('https://call-db-aayu.herokuapp.com/api/department/register'),
+      Uri.parse(
+          'https://call-db-aayu.herokuapp.com/api/department/addDepartmentHospital/${widget.id}'),
       headers: {
         "Content-Type": "application/json",
       },
@@ -113,26 +56,31 @@ class _HomeState extends State<Home> {
       }),
     );
     if (response.statusCode == 200) {
-      var serverResponse = response.body;
-      print(serverResponse);
       setState(() {});
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => Home(
+                    id: widget.id,
+                    initpage: 1,
+                  )));
     } else {
       print(response.reasonPhrase);
     }
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (BuildContext context) => Home(
-                  id: widget.id,
-                  initpage: 1,
-                )));
   }
 
   @override
   void initState() {
     super.initState();
-    print(widget.id);
+    getalldoctors();
     active["page"] = widget.initpage;
+    if (active["page"] == 0) active["indicator"] = 22;
+    if (active["page"] == 1) {
+      active["indicator"] = 104;
+      width = 60;
+    }
+    if (active["page"] == 2) active["indicator"] = 242;
+    if (active["page"] == 3) active["indicator"] = 338;
     setState(() {});
   }
 
@@ -239,14 +187,11 @@ class _HomeState extends State<Home> {
             top: 80,
             left: active["page"] == 0 ? 0 : -MediaQuery.of(context).size.width,
             child: Cases(
-              cases: cases,
-              doctors: doctors,
-              sel: sel,
-              rel: rel,
+              id: widget.id,
             ),
           ),
           AnimatedPositioned(
-            child: Department(departments: departments),
+            child: Department(),
             duration: Duration(milliseconds: 500),
             top: 80,
             left: active["page"] == 1
@@ -256,7 +201,9 @@ class _HomeState extends State<Home> {
                     : -MediaQuery.of(context).size.width,
           ),
           AnimatedPositioned(
-            child: Doctors(doctors: doctors),
+            child: Doctors(
+              doctors: doctors,
+            ),
             duration: Duration(milliseconds: 500),
             top: 80,
             left: active["page"] == 2 ? 0 : -MediaQuery.of(context).size.width,
@@ -270,7 +217,7 @@ class _HomeState extends State<Home> {
           AnimatedPositioned(
               duration: Duration(milliseconds: 500),
               top: 80,
-              left: active["page"] == 1
+              left: active["page"] == 1 || active["page"] == 2
                   ? 0
                   : active["page"] == 0
                       ? MediaQuery.of(context).size.width
@@ -284,89 +231,95 @@ class _HomeState extends State<Home> {
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return Dialog(
-                            backgroundColor: Colors.white,
-                            child: Container(
-                              padding: EdgeInsets.all(8),
-                              height: 150,
-                              width: 200,
-                              child: Column(children: [
-                                TextField(
-                                  onChanged: (val) {
-                                    setState(() {
-                                      name = val;
-                                    });
-                                  },
-                                  decoration: InputDecoration(
-                                      hintText: "Enter Department Name",
-                                      border: OutlineInputBorder()),
-                                ),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                Container(
-                                  width: 300,
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Text(
-                                          "Available Beds",
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                        Container(
-                                          height: 30,
-                                          width: 30,
-                                          child: TextField(
-                                            onChanged: (val) {
-                                              setState(() {
-                                                avai = val;
-                                              });
-                                            },
-                                            decoration: InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.all(4),
-                                                border: OutlineInputBorder()),
-                                          ),
-                                        ),
-                                        Text(
-                                          "Occupied Beds",
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                        Container(
-                                          height: 30,
-                                          width: 30,
-                                          child: TextField(
-                                            onChanged: (val) {
-                                              setState(() {
-                                                occ = val;
-                                              });
-                                            },
-                                            decoration: InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.all(4),
-                                                border: OutlineInputBorder()),
-                                          ),
-                                        ),
-                                      ]),
-                                ),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                GestureDetector(
-                                  onTap: adddepartment,
+                          return active["page"] == 1
+                              ? Dialog(
+                                  backgroundColor: Colors.white,
                                   child: Container(
-                                    width: 100,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.blue),
-                                        borderRadius: BorderRadius.circular(4)),
-                                    child: Center(child: Text("SUBMIT")),
+                                    padding: EdgeInsets.all(8),
+                                    height: 150,
+                                    width: 200,
+                                    child: Column(children: [
+                                      TextField(
+                                        onChanged: (val) {
+                                          setState(() {
+                                            name = val;
+                                          });
+                                        },
+                                        decoration: InputDecoration(
+                                            hintText: "Enter Department Name",
+                                            border: OutlineInputBorder()),
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                      Container(
+                                        width: 300,
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Text(
+                                                "Available Beds",
+                                                style: TextStyle(fontSize: 12),
+                                              ),
+                                              Container(
+                                                height: 30,
+                                                width: 30,
+                                                child: TextField(
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      avai = val;
+                                                    });
+                                                  },
+                                                  decoration: InputDecoration(
+                                                      contentPadding:
+                                                          EdgeInsets.all(4),
+                                                      border:
+                                                          OutlineInputBorder()),
+                                                ),
+                                              ),
+                                              Text(
+                                                "Occupied Beds",
+                                                style: TextStyle(fontSize: 12),
+                                              ),
+                                              Container(
+                                                height: 30,
+                                                width: 30,
+                                                child: TextField(
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      occ = val;
+                                                    });
+                                                  },
+                                                  decoration: InputDecoration(
+                                                      contentPadding:
+                                                          EdgeInsets.all(4),
+                                                      border:
+                                                          OutlineInputBorder()),
+                                                ),
+                                              ),
+                                            ]),
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                      GestureDetector(
+                                        onTap: adddepartment,
+                                        child: Container(
+                                          width: 100,
+                                          height: 30,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.blue),
+                                              borderRadius:
+                                                  BorderRadius.circular(4)),
+                                          child: Center(child: Text("SUBMIT")),
+                                        ),
+                                      )
+                                    ]),
                                   ),
                                 )
-                              ]),
-                            ),
-                          );
+                              : NewDoc();
                         });
                   },
                   child: Icon(Icons.add),

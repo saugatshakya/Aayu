@@ -5,18 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Cases extends StatefulWidget {
-  final List cases, doctors;
-  final VoidCallback sel, rel;
-  Cases(
-      {required this.cases,
-      required this.doctors,
-      required this.sel,
-      required this.rel});
+  final int id;
+  Cases({required this.id});
   @override
   _CasesState createState() => _CasesState();
 }
 
 class _CasesState extends State<Cases> {
+  List doctors = [];
+
   int active = 1;
   List menues = ["New Case", "Active Case", "Completed Case"];
   List cases = [];
@@ -30,6 +27,24 @@ class _CasesState extends State<Cases> {
     if (response.statusCode == 200) {
       var serverResponse = response.body;
       cases = jsonDecode(serverResponse);
+      setState(() {});
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
+  getalldoctors() async {
+    final response = await http.get(
+      Uri.parse('https://call-db-aayu.herokuapp.com/api/doctor/list'),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    );
+    if (response.statusCode == 200) {
+      var serverResponse = response.body;
+      doctors = jsonDecode(serverResponse);
+      print(doctors);
+      setState(() {});
     } else {
       print(response.reasonPhrase);
     }
@@ -39,6 +54,7 @@ class _CasesState extends State<Cases> {
   void initState() {
     super.initState();
     getallcases();
+    getalldoctors();
   }
 
   @override
@@ -99,13 +115,12 @@ class _CasesState extends State<Cases> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for (int i = 0; i < widget.cases.length; i++)
-                    widget.cases[i]["status"] == "new"
+                  for (int i = 0; i < cases.length; i++)
+                    cases[i]["status"] == "New"
                         ? Case(
-                            obj: widget.cases[i],
-                            doctors: widget.doctors,
-                            sel: widget.sel,
-                            rel: widget.rel,
+                            id: widget.id,
+                            obj: cases[i],
+                            doctors: doctors,
                           )
                         : SizedBox.shrink()
                 ],
@@ -132,13 +147,12 @@ class _CasesState extends State<Cases> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for (int i = 0; i < widget.cases.length; i++)
-                    widget.cases[i]["status"] == "active"
+                  for (int i = 0; i < cases.length; i++)
+                    cases[i]["status"] == "Active"
                         ? Case(
-                            obj: widget.cases[i],
-                            doctors: widget.doctors,
-                            sel: widget.sel,
-                            rel: widget.rel,
+                            id: widget.id,
+                            obj: cases[i],
+                            doctors: doctors,
                           )
                         : SizedBox.shrink()
                 ],
@@ -165,13 +179,13 @@ class _CasesState extends State<Cases> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for (int i = 0; i < widget.cases.length; i++)
-                    widget.cases[i]["status"] == "completed"
+                  for (int i = 0; i < cases.length; i++)
+                    cases[i]["status"] == "Completed"
                         ? Case(
-                            obj: widget.cases[i],
-                            doctors: widget.doctors,
-                            sel: widget.sel,
-                            rel: widget.rel)
+                            id: widget.id,
+                            obj: cases[i],
+                            doctors: doctors,
+                          )
                         : SizedBox.shrink()
                 ],
               ),

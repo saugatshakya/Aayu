@@ -6,36 +6,11 @@ import 'package:http/http.dart' as http;
 class Doctors extends StatefulWidget {
   final List doctors;
   Doctors({required this.doctors});
-
   @override
   _DoctorsState createState() => _DoctorsState();
 }
 
 class _DoctorsState extends State<Doctors> {
-  List doctors = [];
-  getalldepartments() async {
-    final response = await http.get(
-      Uri.parse('https://call-db-aayu.herokuapp.com/api/doctor/list'),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    );
-    if (response.statusCode == 200) {
-      var serverResponse = response.body;
-      doctors = jsonDecode(serverResponse);
-      print(doctors);
-      setState(() {});
-    } else {
-      print(response.reasonPhrase);
-    }
-  }
-
-  @override
-  void initState() {
-    getalldepartments();
-    super.initState();
-  }
-
   String status = Random().nextBool() ? "Available" : "Busy";
 
   @override
@@ -51,9 +26,11 @@ class _DoctorsState extends State<Doctors> {
             children: [
               for (int i = 0; i < widget.doctors.length; i++)
                 Container(
-                  color: widget.doctors[i]["status"] == "active"
-                      ? Colors.lightBlue[200]
-                      : Colors.red[200],
+                  color:
+                      // widget.doctors[i]["status"] == "active"
+                      //     ? Colors.lightBlue[200]
+                      //     :
+                      Colors.red[200],
                   margin: const EdgeInsets.all(8.0),
                   child: GridTile(
                     child: Padding(
@@ -70,7 +47,7 @@ class _DoctorsState extends State<Doctors> {
                             height: 4,
                           ),
                           Text(
-                            widget.doctors[i]["status"],
+                            widget.doctors[i]["username"] ?? "xx",
                             style: TextStyle(color: Colors.white),
                           ),
                           SizedBox(

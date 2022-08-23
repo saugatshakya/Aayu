@@ -33,7 +33,6 @@ class _LoginState extends State<Login> {
     );
     if (response.statusCode == 200) {
       var serverResponse = response.body;
-      print(serverResponse);
       if (int.parse(serverResponse) < 5000) {
         Navigator.pushReplacement(
             context,

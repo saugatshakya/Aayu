@@ -29,7 +29,6 @@ class _SettingsState extends State<Settings> {
     if (response.statusCode == 200) {
       var serverResponse = response.body;
       hospital = jsonDecode(serverResponse);
-      print(hospital);
       setState(() {});
     } else {
       print(response.reasonPhrase);

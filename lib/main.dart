@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Loading(),
+      home: Home(id: 2, initpage: 0),
     );
   }
 }
